@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Sandy</string>
+    <string name="app_refresh">刷新</string>
+    <string name="app_refresh_tooltip">重新加载信息</string>
+    <string name="app_read">正在读取信息...</string>
+    <string name="app_set">设置</string>
+    <string name="app_set_tooltip">设置TV编号</string>
+
+    <string name="title_zhubiao"> 昆 明 市 南 坝 人 力 资 源 市 场 </string>
+    <string name="title_fubiao"> KUNMING SHI NAN BA REN LI ZI YUAN SHI CHANG  </string>
+    <string name="title_jianzhang"> 招 聘 简 章 </string>
+
+    <string name="table_01_danwei">单位</string>
+    <string name="table_01_bianhao">编号</string>
+    <string name="table_01_dizhi">地址</string>
+    <string name="table_01_lianxi">联系电话</string>
+
+    <string name="table_02_zhaopinzhiwei">招 聘 职 位</string>
+    <string name="table_02_renshu">人数</string>
+    <string name="table_02_zhuanyexueli">专业与学历</string>
+    <string name="table_02_nianlin">年龄</string>
+    <string name="table_02_xinbie">性别</string>
+    <string name="table_02_gongzidaiyu">工资及福利待遇</string>
+    <string name="table_02_qita">其他</string>
+</resources>

@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/layout_full"
+    android:background="@android:color/background_light"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="4">
+
+        <LinearLayout
+            style="@style/layout_vertical"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/logo" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/title_zhubiao"
+                                android:textColor="@android:color/background_dark"
+                                android:textSize="40sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/textView6"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/title_fubiao"
+                                android:textColor="@android:color/background_dark"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_set"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_set"
+                    android:textStyle="bold"
+                    android:tooltipText="@string/app_set_tooltip" />
+
+                <Button
+                    android:id="@+id/btn_refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_refresh"
+                    android:textStyle="bold"
+                    android:tooltipText="@string/app_refresh_tooltip" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <TextView
+            style="@style/layout_vertical"
+            android:layout_weight="2"
+            android:background="@android:color/background_light"
+            android:gravity="center"
+            android:text="@string/title_jianzhang"
+            android:textColor="@android:color/background_dark"
+            android:textSize="50sp"
+            android:textStyle="bold" />
+
+
+
+    </LinearLayout>
+
+<!--
+    <TableLayout
+        style="@style/layout_vertical"
+        android:orientation="vertical"
+        android:layout_weight="4">
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:layout_gravity="center_horizontal">
+
+            <ImageView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:scaleType="fitEnd"
+                android:src="@drawable/logo" />
+
+            <LinearLayout
+                style="@style/layout_horizontal"
+                android:orientation="vertical"
+                android:layout_weight="9"
+                android:layout_gravity="left">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    style="@style/layout_vertical"
+                    android:layout_weight="2"
+                    android:text="@string/title_zhubiao"
+                    android:gravity="left"
+                    android:textColor="@android:color/background_dark"
+                    android:textSize="40sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView6"
+                    style="@style/layout_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/title_fubiao"
+                    android:gravity="left"
+                    android:textColor="@android:color/background_dark"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </TableRow>
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1"
+            android:background="@android:color/background_light">
+
+        <TextView
+            style="@style/layout_horizontal"
+            android:layout_weight="3"
+            android:text="@string/title_jianzhang"
+            android:gravity="center"
+            android:background="@android:color/background_light"
+            android:textColor="@android:color/background_dark"
+            android:textSize="60sp"
+            android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
+
+-->
+    <TableLayout
+        android:id="@+id/main_table"
+        style="@style/layout_vertical"
+        android:layout_weight="2"
+        android:background="@color/colorPrimaryDark">
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="2"
+            android:background="@android:color/background_light">
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="@drawable/shape"
+                android:text="@string/table_01_danwei"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/commpany_name"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/shape"
+                android:text="@string/table_01_bianhao"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/commpany_no"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+
+        </TableRow>
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:background="@color/colorAccent">
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:text="@string/table_01_dizhi"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/commpany_address"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:text="@string/table_01_lianxi"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/commpany_tel"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+
+    </TableLayout>
+
+    <!-- table 2  -->
+
+    <TableLayout
+        style="@style/layout_vertical"
+        android:orientation="vertical"
+        android:layout_weight="6"
+        android:layout_marginTop="1dip">
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_zhaopinzhiwei"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_renshu"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_zhuanyexueli"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_nianlin"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_xinbie"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="3"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_gongzidaiyu"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:text="@string/table_02_qita"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stationName_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/personNum_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/proAndEduBackGround_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/age_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/sex_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/wealAndpay_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="3"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/others_01"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stationName_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/personNum_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/proAndEduBackGround_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/age_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/sex_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/wealAndpay_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="3"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/others_02"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stationName_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/personNum_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/proAndEduBackGround_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/age_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/sex_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/wealAndpay_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="3"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/others_03"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stationName_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/personNum_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/proAndEduBackGround_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/age_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/sex_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/wealAndpay_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="3"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/others_04"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+        <TableRow
+            style="@style/layout_vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stationName_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/personNum_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/proAndEduBackGround_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/age_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/sex_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/wealAndpay_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="3"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/others_05"
+                style="@style/layout_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/shape"
+                android:gravity="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30sp" />
+
+        </TableRow>
+
+
+
+
+
+
+
+    </TableLayout>
+
+
+    <!--备注  -->
+
+
+    <TextView
+        style="@style/layout_vertical"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:background="@android:color/background_light"
+        android:text="      备注 ：请持个人有效证件报名"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp" />
+
+
+</LinearLayout>
