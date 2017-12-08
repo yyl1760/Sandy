@@ -22,15 +22,22 @@ public class Commpany implements Parcelable {
 
     private List<Station> stations ;//岗位信息
 
-    public Commpany(){
+    private boolean isNewData = false ; // 是否为新数据 , true 为新数据 需要显示 false 为老数据或者没有数据 不需要显示
 
-    }
+    private String msg ; // 消息显示
+
+    private boolean isNormal = false; //新数据查询是否正常 true 为正常 ，false 为异常
+
+    public Commpany(){}
 
     protected Commpany(Parcel in) {
         commpnayName = in.readString();
         commpanyNo = in.readString();
         commpanyAddress = in.readString();
         commpanyTel = in.readString();
+        isNewData = in.readByte() != 0;
+        msg = in.readString();
+        isNormal = in.readByte() != 0;
     }
 
     public static final Creator<Commpany> CREATOR = new Creator<Commpany>() {
@@ -85,6 +92,30 @@ public class Commpany implements Parcelable {
         this.stations = stations;
     }
 
+    public boolean isNewData() {
+        return isNewData;
+    }
+
+    public void setNewData(boolean newData) {
+        isNewData = newData;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public boolean isNormal() {
+        return isNormal;
+    }
+
+    public void setNormal(boolean normal) {
+        isNormal = normal;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -96,5 +127,8 @@ public class Commpany implements Parcelable {
         dest.writeString(commpanyNo);
         dest.writeString(commpanyAddress);
         dest.writeString(commpanyTel);
+        dest.writeByte((byte) (isNewData ? 1 : 0));
+        dest.writeString(msg);
+        dest.writeByte((byte) (isNormal ? 1 : 0));
     }
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    style="@style/layout_vertical">
+
+    <!-- 招聘职位 -->
+    <TextView
+        android:id="@+id/zhaopinzhiwei"
+        style="@style/layout_horizontal"
+        android:layout_weight="2"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <!-- 人数 -->
+    <TextView
+        android:id="@+id/renshu"
+        style="@style/layout_horizontal"
+        android:layout_weight="1"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <!-- 专业与学历 -->
+    <TextView
+        android:id="@+id/zhuanyexueli"
+        style="@style/layout_horizontal"
+        android:layout_weight="2"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <!-- 年龄 -->
+    <TextView
+        android:id="@+id/nianlin"
+        style="@style/layout_horizontal"
+        android:layout_weight="1"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <!-- 性别 -->
+    <TextView
+        android:id="@+id/xinbie"
+        style="@style/layout_horizontal"
+        android:layout_weight="1"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <!-- 工资与待遇 -->
+    <TextView
+        android:id="@+id/gongzidaiyu"
+        style="@style/layout_horizontal"
+        android:layout_weight="2"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+    <!-- 其他 -->
+    <TextView
+        android:id="@+id/qita"
+        style="@style/layout_horizontal"
+        android:layout_weight="3"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
+</LinearLayout>
