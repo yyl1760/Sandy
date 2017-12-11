@@ -368,7 +368,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
                                             recalllistView = tableListView ;
                                             recallstation = commpany.getStations() ;
                                             //启动循环显示
-                                            new Thread(runnableListViewTask).start() ;
+                                            //new Thread(runnableListViewTask).start() ;
+                                            if(!Util.isNull(recallstation)&&recallstation.size()>4){
+                                                new Timer().schedule(new TimerTaskForListViewRolling(recalllistView, MainActivity.this,recallstation), 100, 100);
+                                            }
 
                                         }else{ //提示错误信息
                                             infoDialog.setMessage(commpany.getMsg());
@@ -537,7 +540,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     //定时任务开始
     private TimerTask refreshtask = new TimerTask() {
         public void run() {
-            Log.i("定时任务状态：", "对话框："+mAlertDialog.isShowing());
+           // Log.i("定时任务状态：", "对话框："+mAlertDialog.isShowing());
 
             if(!mAlertDialog.isShowing()){ //设置对话框未打开
 
