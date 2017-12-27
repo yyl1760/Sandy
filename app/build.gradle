@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
 
+    // useLibrary 'org.apache.http.legacy' // httpclient
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -42,8 +44,7 @@ dependencies {
     //testImplementation 'junit:junit:4.12'
     //androidTestImplementation 'com.android.support.test:runner:1.0.1'
     //androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    //implementation files('libs/poi/aa-poi-ooxml-schemas-3.10-reduced-more-0.1.5.jar')
-    //implementation files('libs/poi/aa-poi-3.10-min-0.1.5.jar')
-    //implementation files('libs/poi/poi-3.7-20101029.jar')
-    //implementation files('libs/poi/poi-ooxml-3.7-20101029.jar')
+    //implementation 'com.google.code.gson:gson:2.2.4' //gson
+    implementation 'com.squareup.okhttp3:okhttp:3.2.0'
+    implementation 'com.squareup.okio:okio:1.7.0'
 }

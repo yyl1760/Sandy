@@ -25,6 +25,7 @@ public class TimerTaskForListViewRolling extends TimerTask {
     private int smoothBy = 1;
     private Context context;
     private List<Station> list;
+    private  int height ;//item 高度
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
@@ -32,10 +33,11 @@ public class TimerTaskForListViewRolling extends TimerTask {
         };
     };
 
-    public TimerTaskForListViewRolling(ListView listView, Context context, List<Station> list) {
+    public TimerTaskForListViewRolling(ListView listView, Context context, List<Station> list,int height) {
         this.listView = listView;
         this.context = context;
         this.list = list;
+        this.height = height ;
 
         listView.setAdapter(new MyBaseAdapter());
     }
@@ -84,7 +86,7 @@ public class TimerTaskForListViewRolling extends TimerTask {
 
             //Map<String, String> map = sponsorList.get(position%sponsorList.size());
 
-            AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,100);
+            AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,height);
             convertView.setLayoutParams(layoutParams);
             zhaopinzhiwei.setText(station.getStationName());
             renshu.setText(station.getPersonNum());

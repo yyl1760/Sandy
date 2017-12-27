@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -257,11 +258,11 @@ public class Util {
     }
 
 
-    public static List<SmbFile>  readLastSortFile(String LastPath)  {
+    public static List<SmbFile>  readLastSortFile(String LastPath ,boolean sign)  {
         List<SmbFile> refiles = null ;
         try {
             SmbFile file = new SmbFile(LastPath);
-            if( !Util.isNull(file) &&  file.exists() ){
+            if( !Util.isNull(file) &&  file.exists() && sign ){
                 SmbFile[] files = file.listFiles();
                 refiles = getFileSortByModified(files) ;
                 /*
@@ -275,6 +276,9 @@ public class Util {
                     }
                 }
                 */
+            }else{
+                SmbFile[] files = file.listFiles();
+                refiles = getFileSortByModifiedDesc(files) ;
             }
         }catch (Exception e){
             Log.e("读取共享目录文件夹失败",e.getMessage()) ;
@@ -311,6 +315,29 @@ public class Util {
         return simFileList;
     }
 
+    public static List<SmbFile> getFileSortByModifiedDesc(SmbFile [] files) {
+
+        List<SmbFile> simFileList = Arrays.asList(files) ;
+        //开始排序
+        Collections.sort( simFileList, new Comparator<SmbFile>() {
+            public int compare(SmbFile file, SmbFile newFile) {
+                try {
+                    if (file.lastModified() < newFile.lastModified()) {
+                        return -1;
+                    } else if (file.lastModified() == newFile.lastModified()) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } catch (SmbException e) {
+                    e.printStackTrace();
+                }
+                return 1;
+            }
+        });
+        return simFileList;
+    }
+
     /**
      *
      * 获取目录下所有文件
@@ -335,5 +362,17 @@ public class Util {
         return files;
     }
      */
+
+    public static byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int n = 0;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+        }
+        return output.toByteArray();
+    }
+
+
 
 }

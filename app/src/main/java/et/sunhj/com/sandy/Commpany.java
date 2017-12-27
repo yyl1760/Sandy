@@ -16,6 +16,10 @@ public class Commpany implements Parcelable {
 
     private String commpanyNo ;//公司编号
 
+    private String commpanySocialCode ; // 统一社会信用代码
+
+    private String commpanyLinkMan ; //联系人
+
     private String commpanyAddress ;//公司地址
 
     private String commpanyTel ;//联系电话
@@ -130,5 +134,21 @@ public class Commpany implements Parcelable {
         dest.writeByte((byte) (isNewData ? 1 : 0));
         dest.writeString(msg);
         dest.writeByte((byte) (isNormal ? 1 : 0));
+    }
+
+    public String getCommpanySocialCode() {
+        return commpanySocialCode;
+    }
+
+    public void setCommpanySocialCode(String commpanySocialCode) {
+        this.commpanySocialCode = commpanySocialCode;
+    }
+
+    public String getCommpanyLinkMan() {
+        return commpanyLinkMan;
+    }
+
+    public void setCommpanyLinkMan(String commpanyLinkMan) {
+        this.commpanyLinkMan = commpanyLinkMan;
     }
 }

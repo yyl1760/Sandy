@@ -7,19 +7,19 @@ package et.sunhj.com.sandy;
 
 public class Station {
 
-    private String stationName ;//招聘职位
+    private String stationName = "" ;//招聘职位
 
-    private String personNum ;//人数
+    private String personNum = "" ;//人数
 
-    private String proAndEduBackGround ;//专业与学历
+    private String proAndEduBackGround = "" ;//专业与学历
 
-    private String age ;//年龄
+    private String age = "" ;//年龄
 
-    private String sex ;//性别
+    private String sex = "" ;//性别
 
-    private String wealAndpay ;//薪资与福利待遇
+    private String wealAndpay = "" ;//薪资与福利待遇
 
-    private String others ; //其他
+    private String others = ""; //其他
 
 
     public String getStationName() {

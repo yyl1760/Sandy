@@ -32,6 +32,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +44,13 @@ import java.util.TimerTask;
 
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -61,11 +70,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     //public  String commonpath="smb://yyl:123456@192.168.212.132/test/"; //共享目录
     public  String commonpath="smb://yyl:123456@192.168.0.172/test/"; //共享目录
+    //public  String postDataUrl ="http://192.168.0.109:8080/et/fposition/uploadFile" ;//提交数据路径
+    public  String postDataUrl ="http://192.168.0.109:8082/recqy_ym/trainRecord/postTestData" ;//提交数据路径
 
-    private ListView recalllistView = null ;
-    private List<Station> recallstation = null ;
+    private ListView recalllistView = null ; //数据传递
+    private List<Station> recallstation = null ; //数据传递
 
     private Timer refreshtimer = new Timer(true); //定时器
+    private Timer postdatatimer = new Timer(true); //定时器
     private String lastReadPath = null ; //最后读取路径+文件名称
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +128,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         readConfig() ;
 
         //启动定时器 5 秒钟后 每个10 秒执行一次任务
-        refreshtimer.schedule(refreshtask, 10*1000, 3*1000);
+        refreshtimer.schedule(refreshtask, 10*1000, 5*1000);
+        //数据同步
+        postdatatimer.schedule(postDataTask, 10*1000, 5*1000);
 
     }
 
@@ -194,7 +208,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 String tvfile = tvConfig.getString("TVFILE","");
                 String lastPath = commonpath + tvfile +"/" ;
                 System.out.print("最后读取路径："+lastPath);
-                List<SmbFile> getFiles = Util.readLastSortFile(lastPath) ;
+                List<SmbFile> getFiles = Util.readLastSortFile(lastPath,true) ;
                 if( !Util.isNull(getFiles) && getFiles.size()>0){
 
                     String currentReadPath = lastPath + getFiles.get(0).getName() ;
@@ -209,7 +223,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                         SmbFile smbFile = new SmbFile(lastReadPath);
 
                                 if(!Util.isNull(smbFile) && smbFile.exists()){
-                                    Log.i("文件查找","有文件") ;
+                                   // Log.i("文件查找","有文件") ;
 
                                     try {
                                         Workbook workbook = WorkbookFactory.create(smbFile.getInputStream()); //这种方式 Excel 2003/2007/2010 都是可以处理的
@@ -217,55 +231,204 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
                                         List<Station> stationList = new ArrayList<Station>() ;//组装岗位信息
 
-                                        for (int i = 3; i < sheet.getPhysicalNumberOfRows(); i++) {
-                                            //从第三行开始读取 循环行数
-                                            Row row = sheet.getRow(i);
-                                            //获取当前行的列长度
-                                            int cols_length = row.getPhysicalNumberOfCells();
-                                            //设置当前数组长度 5
-                                            String[] str = new String[cols_length];
+                                       // Log.i("当前EXCEL列宽：","宽度："+sheet.getRow(0).getPhysicalNumberOfCells() ) ;
+                                        //读取自定义模板的EXCEL
+                                        if(sheet.getRow(0).getPhysicalNumberOfCells() > 10 ) { //大于10列则为 自定义模板
+                                            for (int i = 3; i < sheet.getPhysicalNumberOfRows(); i++) {
+                                               // Log.i("自定义模板：","行数："+ i ) ;
+                                                //从第三行开始读取 循环行数
+                                                Row row = sheet.getRow(i);
+                                                //获取当前行的列长度
+                                                int cols_length = row.getPhysicalNumberOfCells();
 
-                                            Station station = new Station() ;//组装岗位
-                                            for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
-                                                Cell cell = row.getCell(j);
-                                                String val = Util.getCellValue(cell) ;
-                                                if( i == 3  ){ //第三行 第四行读取 2 4 的值 设置公司名称 公司编号
-                                                    if( j == 2 )
-                                                        commpany.setCommpnayName(val);
-                                                    if( j == 8 )
-                                                        commpany.setCommpanyNo(val);
-                                                }else if( i == 4 ){
-                                                    if( j == 2 )
-                                                        commpany.setCommpanyAddress(val);
-                                                    if( j == 8 )
-                                                        commpany.setCommpanyTel(val);
-                                                }else{  //列表行
-                                                    if( i >= 6 ){
+                                                Station station = new Station() ;//组装岗位
 
+                                                for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
+                                                    Cell cell = row.getCell(j);
+                                                    String val = Util.getCellValue(cell) ;
+                                                   // Log.i("自定义模板：","值为："+ val +" ，列数："+ j ) ;
+
+                                                    if( i == 3 ) { //第三行读取 1 7 的值 设置公司名称 公司编号
                                                         if( j == 1 )
-                                                            station.setStationName(val); //岗位名称
-                                                        if( j == 2 )
-                                                            station.setPersonNum(val);//人数
-                                                        if( j == 3 )
-                                                            station.setProAndEduBackGround(val);//专业与学历
-                                                        if( j == 4 )
-                                                            station.setProAndEduBackGround(station.getProAndEduBackGround()+","+val);//专业与学历
-                                                        if( j == 5 )
-                                                            station.setAge(val);//年龄
-                                                        if( j == 6 )
-                                                            station.setSex(val);//性别
+                                                            commpany.setCommpnayName(val); //公司名称
                                                         if( j == 7 )
-                                                            station.setWealAndpay(val);//工资与福利待遇
+                                                            commpany.setCommpanyNo(val); //编号
+                                                    } else if ( i == 4 ) { // 第四行 设置统一社会信息代码 和 联系人
+                                                        if( j == 1 )
+                                                            commpany.setCommpanySocialCode(val); // 统一社会信用代码
+                                                        if( j == 7 )
+                                                            commpany.setCommpanyLinkMan(val); // 联系人
+                                                    }else if ( i == 5 ) { // 第五行 设置地址和联系电话
+                                                        if( j == 1 )
+                                                            commpany.setCommpanyAddress(val); // 地址
+                                                        if( j == 7 )
+                                                            commpany.setCommpanyTel(val); // 联系电话
+                                                    }else{ //读取明细行
+                                                        if( i >= 8 ){ //读取第8 行以后数据
+                                                            //招聘岗位三级 默认去最后一级
+                                                            if( j == 0 ) { //第一级
+                                                                if(!Util.isNull(val))  station.setStationName(val);
+                                                            }
+                                                            if( j == 1 ) { //第二级
+                                                                if(!Util.isNull(val))  station.setStationName(val);
+                                                            }
+                                                            if( j == 2 ) { //第三级
+                                                                if(!Util.isNull(val)) station.setStationName(val);
+                                                            }
+                                                            if( j == 3 ) // 人数
+                                                                station.setPersonNum(val);
+                                                            if( j == 4 ) { // 专业
+                                                                station.setProAndEduBackGround(val);
+                                                            }
+                                                            if( j == 5 ) { // 学历
+                                                                station.setProAndEduBackGround(station.getProAndEduBackGround()+","+val);
+                                                            }
+                                                            if( j == 6 ) { // 年龄
+                                                                station.setAge(val);
+                                                            }
+                                                            if( j == 7 ) { // 性别
+                                                                station.setSex(val);
+                                                            }
+                                                            if( j == 8 ) { // 工资
+                                                                station.setWealAndpay(val);
+                                                            }
+                                                            if( j == 9 ) { // 提成
+                                                                if(val.equals("有")) station.setWealAndpay(station.getWealAndpay() + "+提成");
+                                                            }
+                                                            if( j == 10 ) { // 养老保险
+                                                                if(val.equals("有"))  station.setOthers("养老保险");
+                                                            }
+                                                            if( j == 11 ) { // 医疗保险
+                                                                if(val.equals("有")) {
+                                                                    if(Util.isNull(station.getOthers())){
+                                                                        station.setOthers("医疗保险" );
+                                                                    }else{
+                                                                        station.setOthers(station.getOthers() + ",医疗保险" );
+                                                                    }
+                                                                }
+                                                            }
+                                                            if( j == 12 ) { // 失业保险
+                                                                if(val.equals("有")){
+                                                                    if(Util.isNull(station.getOthers())){
+                                                                        station.setOthers("失业保险");
+                                                                    }else{
+                                                                        station.setOthers(station.getOthers() + ",失业保险");
+                                                                    }
+                                                                }
+                                                            }
+                                                            if( j == 13 ) { // 工商保险
+                                                                if(val.equals("有")){
+                                                                    if(Util.isNull(station.getOthers())){
+                                                                        station.setOthers("工商保险");
+                                                                    }else{
+                                                                        station.setOthers(station.getOthers() + ",工商保险");
+                                                                    }
+                                                                }
+                                                            }
+                                                            if( j == 14 ) { // 生育保险
+                                                                if(val.equals("有")) {
+                                                                    if(Util.isNull(station.getOthers())){
+                                                                        station.setOthers("生育保险");
+                                                                    }else{
+                                                                        station.setOthers(station.getOthers() + ",生育保险");
+                                                                    }
+                                                                }
+                                                            }
+                                                            if( j == 15 ) { // 商业险
+                                                                if(val.equals("有")) {
+                                                                    if(Util.isNull(station.getOthers())){
+                                                                        station.setOthers("商业险");
+                                                                    }else{
+                                                                        station.setOthers(station.getOthers() + ",商业险");
+                                                                    }
+                                                                }
+                                                            }
+                                                            if( j == 16 ) { // 其他
+                                                                if(val.equals("有")){
+                                                                    if(Util.isNull(station.getOthers())){
+                                                                        station.setOthers("其他");
+                                                                    }else{
+                                                                        station.setOthers(station.getOthers() + ",其他");
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                        }
+                                                    }
+
+                                                }
+                                                if( i >= 8 ){
+                                                    if( !Util.isNull(station.getStationName()) && !Util.isNull(station.getPersonNum())  && !Util.isNull(station.getProAndEduBackGround()) && !Util.isNull(station.getSex()) && !Util.isNull(station.getAge()) && !Util.isNull(station.getWealAndpay())   ) // 岗位名称 和 人数不为空 加入显示
+                                                    stationList.add(station) ;
+                                                }
+
+
+                                            }
+
+                                        }else{ //系统导出模板
+
+                                            //读取从系统导出的EXCEL
+                                            for (int i = 3; i < sheet.getPhysicalNumberOfRows(); i++) {
+                                                //从第三行开始读取 循环行数
+                                                Row row = sheet.getRow(i);
+                                                //获取当前行的列长度
+                                                int cols_length = row.getPhysicalNumberOfCells();
+                                                //设置当前数组长度 5
+                                                String[] str = new String[cols_length];
+
+                                                Station station = new Station() ;//组装岗位
+                                                for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
+                                                    Cell cell = row.getCell(j);
+                                                    String val = Util.getCellValue(cell) ;
+                                                    if( i == 3 ) { //第三行读取 1 7 的值 设置公司名称 公司编号
+                                                        if( j == 2 )
+                                                            commpany.setCommpnayName(val); //公司名称
                                                         if( j == 8 )
-                                                            station.setOthers(val);//其他
+                                                            commpany.setCommpanyNo(val); //编号
+                                                    } else if ( i == 4 ) { // 第四行 设置统一社会信息代码 和 联系人
+                                                        if( j == 2 )
+                                                            commpany.setCommpanySocialCode(val); // 统一社会信用代码
+                                                        if( j == 8 )
+                                                            commpany.setCommpanyLinkMan(val); // 联系人
+                                                    }else if ( i == 5 ) { // 第五行 设置地址和联系电话
+                                                        if( j == 2 )
+                                                            commpany.setCommpanyAddress(val); // 地址
+                                                        if( j == 8 )
+                                                            commpany.setCommpanyTel(val); // 联系电话
+                                                    }else{  //列表行
+                                                        if( i >= 7 ){
+
+                                                            if( j == 1 )
+                                                                station.setStationName(val); //岗位名称
+                                                            if( j == 2 )
+                                                                station.setPersonNum(val);//人数
+                                                            if( j == 3 )
+                                                                station.setProAndEduBackGround(val);//专业与学历
+                                                            if( j == 4 )
+                                                                if (!Util.isNull(station.getProAndEduBackGround())) station.setProAndEduBackGround(station.getProAndEduBackGround()+","+val);//专业与学历
+                                                                else station.setProAndEduBackGround(val);
+                                                            if( j == 5 )
+                                                                station.setAge(val);//年龄
+                                                            if( j == 6 )
+                                                                station.setSex(val);//性别
+                                                            if( j == 7 )
+                                                                station.setWealAndpay(val);//工资与福利待遇
+                                                            if( j == 8 )
+                                                                station.setOthers(val);//其他
+
+                                                        }
 
                                                     }
 
                                                 }
+                                                if(i >= 7){
+                                                        if( !Util.isNull(station.getStationName()) && !Util.isNull(station.getPersonNum())  && !Util.isNull(station.getProAndEduBackGround()) && !Util.isNull(station.getSex()) && !Util.isNull(station.getAge()) && !Util.isNull(station.getWealAndpay())   )
+                                                        stationList.add(station) ;
+                                                }
 
                                             }
-                                            if(i >= 6)
-                                                stationList.add(station) ;
+
                                         }
 
                                         commpany.setStations(stationList);//设置岗位
@@ -370,7 +533,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                                             //启动循环显示
                                             //new Thread(runnableListViewTask).start() ;
                                             if(!Util.isNull(recallstation)&&recallstation.size()>4){
-                                                new Timer().schedule(new TimerTaskForListViewRolling(recalllistView, MainActivity.this,recallstation), 100, 100);
+                                                new Timer().schedule(new TimerTaskForListViewRolling(recalllistView, MainActivity.this,recallstation,commpany_name.getHeight()), 100, 100);
                                             }
 
                                         }else{ //提示错误信息
@@ -561,6 +724,367 @@ public class MainActivity extends Activity implements View.OnClickListener{
            // Toast.makeText(MainActivity.this, msg.getData().get("msg").toString(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    private TimerTask postDataTask = new TimerTask() {
+        public void run() {
+            // Log.i("定时任务状态：", "对话框："+mAlertDialog.isShowing());
+            Log.i("定时任务提交数据开始：", "检测网络状态,局域网IP："+Util.getHostIP());
+            Log.i("定时任务提交数据开始：", "检测网络状态,外网IP："+Util.getNetIp());
+
+            if(!Util.isNull(Util.getNetIp())){ //外网正常
+
+                //上传数据
+
+                //HttpClient client = new DefaultHttpClient();
+                //String url = postDataUrl;
+                //HttpPost httpPost = new HttpPost(url);
+                //读取excel 提交
+                /*
+                    Commpany commpany = readExcelForPost() ;
+
+                    //将List转换成json串
+                    try {
+                        Gson gson = new Gson();
+                        String s = gson.toJson(commpany);
+                        System.out.println(s);
+
+                        StringEntity entity = new StringEntity(s,"utf-8");//解决中文乱码问题
+                        entity.setContentEncoding("UTF-8");
+                        entity.setContentType("application/json");
+                        httpPost.setEntity(entity);
+                        HttpResponse response = client.execute(httpPost);
+                        System.out.println(response.getStatusLine());
+                        HttpEntity responseEntity = response.getEntity();
+                        System.out.println(EntityUtils.toString(responseEntity,"UTF-8")) ;
+
+                    }catch ( Exception e){
+                        e.printStackTrace();
+                    }
+                */
+                //读题文件提交
+                SharedPreferences tvConfig = getSharedPreferences("tvConfig", Context.MODE_PRIVATE);
+                //检查当前键是否存在
+                boolean isContains = tvConfig.contains("TVFILE");
+
+                if(isContains) { //存在 开始读取数据
+
+                    String tvfile = tvConfig.getString("TVFILE", "");
+                    String lastPath = commonpath + tvfile + "/";
+                    Log.i("数据同步" ,"最后读取路径："+lastPath);
+                    List<SmbFile> getFiles = Util.readLastSortFile(lastPath,false) ;
+                    if( !Util.isNull(getFiles) && getFiles.size() > 0){
+                        Log.i("数据同步","文件名称："+getFiles.get(0).getName());
+
+                        // 连接服务器判断是否需要上传文件
+                        /*
+                        OkHttpClient mOkHttpClient=new OkHttpClient();
+
+                        SmbFile smbFile = getFiles.get(0) ;
+
+                        Request request = new Request.Builder()
+                                .url("https://api.github.com/markdown/raw")
+                                .post(RequestBody.create(MediaType.parse("text/x-markdown; charset=utf-8"), String.valueOf(smbFile)))
+                                .build();
+
+                        mOkHttpClient.newCall(request).enqueue(new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                }
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    Log.i("okHttp:",response.body().string());
+                                }
+                        });
+                        */
+
+                    }
+
+                }
+
+
+                Message msg = new Message();
+                Bundle data = new Bundle();
+                data.putString("msg","数据上传中...");
+                msg.setData(data);
+                postDataHandler.sendMessage(msg);
+            }
+        }
+    };
+    private Handler postDataHandler  = new Handler(){
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Toast.makeText(MainActivity.this, msg.getData().get("msg").toString(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+    /***
+     * 数据同步是读取EXCEL 数据
+     */
+    public Commpany readExcelForPost(){
+        Commpany commpany = new Commpany(); ;
+        try {
+            SharedPreferences tvConfig = getSharedPreferences("tvConfig", Context.MODE_PRIVATE);
+            //检查当前键是否存在
+            boolean isContains = tvConfig.contains("TVFILE");
+            //不存在开启配置
+            if(isContains){ //存在 开始读取数据
+
+                String tvfile = tvConfig.getString("TVFILE","");
+                String lastPath = commonpath + tvfile +"/" ;
+                System.out.print("数据同步-最后读取路径："+lastPath);
+                List<SmbFile> getFiles = Util.readLastSortFile(lastPath,false) ;
+                if( !Util.isNull(getFiles) && getFiles.size()>0){
+
+                    String currentReadPath = lastPath + getFiles.get(0).getName() ;
+
+                        commpany.setNewData(true);// 新数据
+                        System.out.print("数据同步-读取文件："+currentReadPath);
+                        SmbFile smbFile = new SmbFile(currentReadPath);
+
+                        if(!Util.isNull(smbFile) && smbFile.exists()){
+                            //Log.i("文件查找","有文件") ;
+
+                            try {
+                                Workbook workbook = WorkbookFactory.create(smbFile.getInputStream()); //这种方式 Excel 2003/2007/2010 都是可以处理的
+                                Sheet sheet = workbook.getSheetAt(0);//得到excel第一页的内容
+
+                                List<Station> stationList = new ArrayList<Station>() ;//组装岗位信息
+
+                                //Log.i("当前EXCEL列宽：","宽度："+sheet.getRow(0).getPhysicalNumberOfCells() ) ;
+                                //读取自定义模板的EXCEL
+                                if(sheet.getRow(0).getPhysicalNumberOfCells() > 10 ) { //大于10列则为 自定义模板
+                                    for (int i = 3; i < sheet.getPhysicalNumberOfRows(); i++) {
+                                        //Log.i("自定义模板：","行数："+ i ) ;
+                                        //从第三行开始读取 循环行数
+                                        Row row = sheet.getRow(i);
+                                        //获取当前行的列长度
+                                        int cols_length = row.getPhysicalNumberOfCells();
+
+                                        Station station = new Station() ;//组装岗位
+
+                                        for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
+                                            Cell cell = row.getCell(j);
+                                            String val = Util.getCellValue(cell) ;
+                                            //Log.i("自定义模板：","值为："+ val +" ，列数："+ j ) ;
+
+                                            if( i == 3 ) { //第三行读取 1 7 的值 设置公司名称 公司编号
+                                                if( j == 1 )
+                                                    commpany.setCommpnayName(val); //公司名称
+                                                if( j == 7 )
+                                                    commpany.setCommpanyNo(val); //编号
+                                            } else if ( i == 4 ) { // 第四行 设置统一社会信息代码 和 联系人
+                                                if( j == 1 )
+                                                    commpany.setCommpanySocialCode(val); // 统一社会信用代码
+                                                if( j == 7 )
+                                                    commpany.setCommpanyLinkMan(val); // 联系人
+                                            }else if ( i == 5 ) { // 第五行 设置地址和联系电话
+                                                if( j == 1 )
+                                                    commpany.setCommpanyAddress(val); // 地址
+                                                if( j == 7 )
+                                                    commpany.setCommpanyTel(val); // 联系电话
+                                            }else{ //读取明细行
+                                                if( i >= 8 ){ //读取第8 行以后数据
+                                                    //招聘岗位三级 默认去最后一级
+                                                    if( j == 0 ) { //第一级
+                                                        if(!Util.isNull(val))  station.setStationName(val);
+                                                    }
+                                                    if( j == 1 ) { //第二级
+                                                        if(!Util.isNull(val))  station.setStationName(val);
+                                                    }
+                                                    if( j == 2 ) { //第三级
+                                                        if(!Util.isNull(val)) station.setStationName(val);
+                                                    }
+                                                    if( j == 3 ) // 人数
+                                                        station.setPersonNum(val);
+                                                    if( j == 4 ) { // 专业
+                                                        station.setProAndEduBackGround(val);
+                                                    }
+                                                    if( j == 5 ) { // 学历
+                                                        station.setProAndEduBackGround(station.getProAndEduBackGround()+","+val);
+                                                    }
+                                                    if( j == 6 ) { // 年龄
+                                                        station.setAge(val);
+                                                    }
+                                                    if( j == 7 ) { // 性别
+                                                        station.setSex(val);
+                                                    }
+                                                    if( j == 8 ) { // 工资
+                                                        station.setWealAndpay(val);
+                                                    }
+                                                    if( j == 9 ) { // 提成
+                                                        if(val.equals("有")) station.setWealAndpay(station.getWealAndpay() + "+提成");
+                                                    }
+                                                    if( j == 10 ) { // 养老保险
+                                                        if(val.equals("有"))  station.setOthers("养老保险");
+                                                    }
+                                                    if( j == 11 ) { // 医疗保险
+                                                        if(val.equals("有")) {
+                                                            if(Util.isNull(station.getOthers())){
+                                                                station.setOthers("医疗保险" );
+                                                            }else{
+                                                                station.setOthers(station.getOthers() + ",医疗保险" );
+                                                            }
+                                                        }
+                                                    }
+                                                    if( j == 12 ) { // 失业保险
+                                                        if(val.equals("有")){
+                                                            if(Util.isNull(station.getOthers())){
+                                                                station.setOthers("失业保险");
+                                                            }else{
+                                                                station.setOthers(station.getOthers() + ",失业保险");
+                                                            }
+                                                        }
+                                                    }
+                                                    if( j == 13 ) { // 工商保险
+                                                        if(val.equals("有")){
+                                                            if(Util.isNull(station.getOthers())){
+                                                                station.setOthers("工商保险");
+                                                            }else{
+                                                                station.setOthers(station.getOthers() + ",工商保险");
+                                                            }
+                                                        }
+                                                    }
+                                                    if( j == 14 ) { // 生育保险
+                                                        if(val.equals("有")) {
+                                                            if(Util.isNull(station.getOthers())){
+                                                                station.setOthers("生育保险");
+                                                            }else{
+                                                                station.setOthers(station.getOthers() + ",生育保险");
+                                                            }
+                                                        }
+                                                    }
+                                                    if( j == 15 ) { // 商业险
+                                                        if(val.equals("有")) {
+                                                            if(Util.isNull(station.getOthers())){
+                                                                station.setOthers("商业险");
+                                                            }else{
+                                                                station.setOthers(station.getOthers() + ",商业险");
+                                                            }
+                                                        }
+                                                    }
+                                                    if( j == 16 ) { // 其他
+                                                        if(val.equals("有")){
+                                                            if(Util.isNull(station.getOthers())){
+                                                                station.setOthers("其他");
+                                                            }else{
+                                                                station.setOthers(station.getOthers() + ",其他");
+                                                            }
+                                                        }
+                                                    }
+
+
+                                                }
+                                            }
+
+                                        }
+                                        if( i >= 8 ){
+                                            if( !Util.isNull(station.getStationName()) && !Util.isNull(station.getPersonNum())  && !Util.isNull(station.getProAndEduBackGround()) && !Util.isNull(station.getSex()) && !Util.isNull(station.getAge()) && !Util.isNull(station.getWealAndpay())   )
+                                            stationList.add(station) ;
+                                        }
+
+
+                                    }
+
+                                }else{ //系统导出模板
+
+                                    //读取从系统导出的EXCEL
+                                    for (int i = 3; i < sheet.getPhysicalNumberOfRows(); i++) {
+                                        //从第三行开始读取 循环行数
+                                        Row row = sheet.getRow(i);
+                                        //获取当前行的列长度
+                                        int cols_length = row.getPhysicalNumberOfCells();
+
+                                        Station station = new Station() ;//组装岗位
+                                        for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
+                                            Cell cell = row.getCell(j);
+                                            String val = Util.getCellValue(cell) ;
+                                            if( i == 3 ) { //第三行读取 1 7 的值 设置公司名称 公司编号
+                                                if( j == 2 )
+                                                    commpany.setCommpnayName(val); //公司名称
+                                                if( j == 8 )
+                                                    commpany.setCommpanyNo(val); //编号
+                                            } else if ( i == 4 ) { // 第四行 设置统一社会信息代码 和 联系人
+                                                if( j == 2 )
+                                                    commpany.setCommpanySocialCode(val); // 统一社会信用代码
+                                                if( j == 8 )
+                                                    commpany.setCommpanyLinkMan(val); // 联系人
+                                            }else if ( i == 5 ) { // 第五行 设置地址和联系电话
+                                                if( j == 2 )
+                                                    commpany.setCommpanyAddress(val); // 地址
+                                                if( j == 8 )
+                                                    commpany.setCommpanyTel(val); // 联系电话
+                                            }else{  //列表行
+                                                if( i >= 7 ){
+
+                                                    if( j == 1 )
+                                                        station.setStationName(val); //岗位名称
+                                                    if( j == 2 )
+                                                        station.setPersonNum(val);//人数
+                                                    if( j == 3 )
+                                                        station.setProAndEduBackGround(val);//专业与学历
+                                                    if( j == 4 )
+                                                        if (!Util.isNull(station.getProAndEduBackGround())) station.setProAndEduBackGround(station.getProAndEduBackGround()+","+val);//专业与学历
+                                                        else station.setProAndEduBackGround(val);
+                                                    if( j == 5 )
+                                                        station.setAge(val);//年龄
+                                                    if( j == 6 )
+                                                        station.setSex(val);//性别
+                                                    if( j == 7 )
+                                                        station.setWealAndpay(val);//工资与福利待遇
+                                                    if( j == 8 )
+                                                        station.setOthers(val);//其他
+
+                                                }
+
+                                            }
+
+                                        }
+                                        if(i >= 7){
+                                            if( !Util.isNull(station.getStationName()) && !Util.isNull(station.getPersonNum())  && !Util.isNull(station.getProAndEduBackGround()) && !Util.isNull(station.getSex()) && !Util.isNull(station.getAge()) && !Util.isNull(station.getWealAndpay())  )
+                                            stationList.add(station) ;
+                                        }
+
+                                    }
+
+                                }
+
+                                commpany.setStations(stationList);//设置岗位
+
+                                commpany.setNormal(true);//新数据显示正常
+
+                            } catch (FileNotFoundException e) {
+                                // log.error("！！！！！！！ 未找到文件!文件为: 【"+path+"】");
+                                commpany.setMsg("未找到文件!");
+                                e.printStackTrace();
+                            } catch (InvalidFormatException e) {
+                                //log.error("！！！！！！！ 解析文件出错!文件为: 【"+path+"】");
+                                commpany.setMsg("解析文件出错!");
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                commpany.setMsg("解析文件出错!");
+                                //log.error("！！！！！！！ 解析文件出错!文件为: 【"+path+"】");
+                                e.printStackTrace();
+                            }
+
+                        }else{
+                            commpany.setMsg("该文件夹下没有文件");
+                            Log.i("文件查找","没有文件") ;
+                        }
+
+
+                }else{
+                    commpany.setMsg("该文件夹下没有文件,请联系管理员添加");
+                    Log.i("文件查找","没有文件") ;
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return commpany ;
+    }
 
 
 }
