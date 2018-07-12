@@ -68,8 +68,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private AlertDialog mAlertDialog = null; //TV设置对话框
     private AlertDialog infoDialog = null; //信息提示对话框
 
-    //public  String commonpath="smb://yyl:123456@192.168.212.132/test/"; //共享目录
-    public  String commonpath="smb://yyl:123456@192.168.0.172/test/"; //共享目录
+    public  String commonpath="smb://yyl:123456@192.168.0.121/test/"; //共享目录
+    //public  String commonpath="smb://yyl:123456@192.168.0.172/test/"; //共享目录
     //public  String postDataUrl ="http://192.168.0.109:8080/et/fposition/uploadFile" ;//提交数据路径
     public  String postDataUrl ="http://192.168.0.109:8082/recqy_ym/trainRecord/postTestData" ;//提交数据路径
 
@@ -130,7 +130,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         //启动定时器 5 秒钟后 每个10 秒执行一次任务
         refreshtimer.schedule(refreshtask, 10*1000, 5*1000);
         //数据同步
-        postdatatimer.schedule(postDataTask, 10*1000, 5*1000);
+        postdatatimer.schedule(postDataTask, 10*1000, 15*1000);
 
     }
 
@@ -213,7 +213,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
                     String currentReadPath = lastPath + getFiles.get(0).getName() ;
 
-                    if( Util.isNull(lastReadPath) || !lastReadPath.equals(currentReadPath) ){ //路径变动需要读取
+                    //if( Util.isNull(lastReadPath) || !lastReadPath.equals(currentReadPath) ){ //路径变动需要读取
 
                         lastReadPath = currentReadPath ;
 
@@ -456,7 +456,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                                     Log.i("文件查找","没有文件") ;
                                 }
 
-                    }
+                   // }
 
 
                 }else{
@@ -483,6 +483,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             // 在这里进行 http request.网络请求相关操作
            // Looper.prepare();
             Commpany commpany  =  readExcel() ;//readExcel() ; // readFile() ;
+            Log.i("读取新文件中：","开始读取新文件,公司名称："+commpany.getCommpnayName()) ;
 
             Message msg = new Message();
             Bundle data = new Bundle();
@@ -711,7 +712,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
                 Message msg = new Message();
                 Bundle data = new Bundle();
-                data.putString("msg","刷新数据中...");
+                data.putString("msg","定时刷新数据中...");
                 msg.setData(data);
                 refreshhandler.sendMessage(msg);
             }
@@ -721,7 +722,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private Handler refreshhandler  = new Handler(){
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-           // Toast.makeText(MainActivity.this, msg.getData().get("msg").toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, msg.getData().get("msg").toString(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -804,7 +805,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
                 Message msg = new Message();
                 Bundle data = new Bundle();
-                data.putString("msg","数据上传中...");
+                data.putString("msg","定时数据回传中...");
                 msg.setData(data);
                 postDataHandler.sendMessage(msg);
             }
